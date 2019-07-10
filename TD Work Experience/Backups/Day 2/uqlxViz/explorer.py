@@ -1,6 +1,5 @@
 # no wildcard import such that all new tcl/ tkk widgets are all accesable by tk
 import tkinter as tk
-import json_manager
 
 def hello():
     print("hello")
@@ -16,14 +15,9 @@ class Explorer(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self._parent = parent
-        self._frame = tk.Frame(self._parent, width = 200, height = 600, borderwidth=5, bg = "white")
+        self._frame = tk.Frame(self._parent, width = 200, height = 600, borderwidth=5, bg = "yellow")
         self._frame.pack(expand = 0, anchor = 'nw', side='left' ,fill = 'y', padx = 5, pady = 5)
     
     # I wanted to keep most class attributes and methods private. theses get/set methods are for encapulation purposes.
     def get_frame(self):
         return self._frame
-
-    # to load file then set up treeview
-    def file_load(self, filename):
-        json_manager.read_file(filename)
-        
