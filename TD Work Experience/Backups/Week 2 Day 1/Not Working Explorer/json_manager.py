@@ -56,7 +56,7 @@ def read_file(file_name):
            
     dataCollection_return_dict = { "modelType": full_dict["modelType"],
      "baseDate": full_dict["baseDate"] ,
-     "dataCollection" : { "Currency Pairs": fx_dict , "Currencies" : ccy_dict} ,
-     "stateDataCollection" : "wip"  }
+     "dataCollection|UQL/DataCollection" : { "fx": fx_dict , "currency" : ccy_dict} ,
+      "stateDataCollection|UQL/DataCollection" : "wip"  }
     
     return dataCollection_return_dict

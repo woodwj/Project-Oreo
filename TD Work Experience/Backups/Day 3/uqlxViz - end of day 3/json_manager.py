@@ -54,9 +54,5 @@ def read_file(file_name):
             if utils.is_currency(ccy):
                 ccy_dict[ccy].append(dataCollection_set)
            
-    dataCollection_return_dict = { "modelType": full_dict["modelType"],
-     "baseDate": full_dict["baseDate"] ,
-     "dataCollection" : { "Currency Pairs": fx_dict , "Currencies" : ccy_dict} ,
-     "stateDataCollection" : "wip"  }
-    
+    dataCollection_return_dict = { "fx": fx_dict , "currency" : ccy_dict}
     return dataCollection_return_dict

@@ -9,9 +9,7 @@ class Display(tk.Frame):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self._parent = parent
         self._frame = tk.Frame(self._parent, width = 600, height = 400, borderwidth=5, bg = "blue")
-        self._frame.pack(expand = 0, anchor = 'ne', side='top', fill = 'both',padx = 5, pady = 5)
-        self._frame_title = tk.Label(self._frame, text = "Display")
-        self._frame_title.pack(anchor = "nw")
+        self._frame.pack(expand = 1, anchor = 'ne', side='top', fill = 'both',padx = 5, pady = 5)
 
     # I wanted to keep most class attributes and methods private. theses get/set methods are for encapulation purposes.
     def get_frame(self):

@@ -39,45 +39,24 @@ class Explorer(tk.Frame):
     # to load file then set up treeview          
 
     def tree_load(self, Tree, Parent, Dictionery, recur_index = 0):
-    
-        if recur_index == 0:
-                CurveID = "Curve_" + str(self.curveCount)
-                Tree.insert(Parent, 'end', CurveID, text = CurveID)
-                Parent = CurveID
-
-
         if isinstance(Dictionery , dict):
 
             for key in Dictionery :
                 value = Dictionery[key]
                 
                 if isinstance( value , dict):
-                    
-                    
-                    if key == "item|UQL/DataCollection":
-                        key = value["dataConvention"]
-                    
-                        text_key = key
-                        key = utils.check_exist(Tree, key)
-                        Tree.insert(Parent, 'end', key, text = text_key)
-
-                    else:
-                        text_key = key
-                        key = utils.check_exist(Tree, key)
-                        Tree.insert(Parent, 'end', key, text = text_key)        
-                        
-                        recur_index +=1
-                        self.tree_load( Tree, key, value, recur_index) # These are Currency, fx level
+                    text_key = key
+                    key = utils.check_exist(Tree, key)
+                    Tree.insert(Parent, 'end', key, text = text_key)
+                    recur_index +=1
+                    self.tree_load( Tree, key, value, recur_index) # These are Currency, fx level
                 
                 elif isinstance( value , list):
                     text_key = key
                     key = utils.check_exist(Tree, key)
-                    if recur_index == 2 and len(key)== 6:
-                        dataValue =  value[0][0]['item|UQL/DataPointCurveInstrument']["dataValue"]
-                        Tree.insert(Parent, 'end', key, text = text_key, values = (dataValue))
-                    else:
-                        Tree.insert(Parent, 'end', key, text = text_key)
-                        self.tree_load( Tree, key, value , recur_index) # these are the build methods for currency / fx
+                    Tree.insert(Parent, 'end', key, text = text_key)
+                    recur_index +=1
+                    self.tree_load( Tree, key, value , recur_index) # these are the build methods for currency / fx
                 
                 else: # when reach bottom dict values
                     text_key = key
@@ -86,7 +65,7 @@ class Explorer(tk.Frame):
         
         else: # is list recour this way
             for item in Dictionery:
-                #recur_index +=1
+                recur_index +=1
                 self.tree_load( Tree, Parent, item ,recur_index )
 
 

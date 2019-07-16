@@ -31,15 +31,4 @@ def gen_dict_extract(key, var):
                     for result in gen_dict_extract(key, d):
                         yield result
 
-#def value_ripper(key, structure):
 
-    
-                        
-
-
-def check_exist(tree, key):
-    if tree.exists(key) == False:
-        return(key)
-    else:
-        key = key + "1"
-        return(check_exist(tree, key))

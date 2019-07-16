@@ -13,7 +13,7 @@ class Log(tk.Frame,):
 
         # create logbox and fill the frame
         self._frame = tk.Frame(self._parent, width = 800, height = 200, borderwidth=5 )
-        self._frame_title = tk.Label(self._frame, text = "Output")
+        self._frame_title = tk.Label(self._frame, text = "Log")
         self._frame_title.pack(anchor = "nw")
         self._frame.pack(expand = 0, anchor = 'sw', side='bottom', fill = 'x',padx = 5, pady = 5)
         self._logbox = ScrolledText.ScrolledText(self._frame, state='disabled', )
@@ -23,7 +23,7 @@ class Log(tk.Frame,):
         # start up logo load and write to log
         self._logo = open("media/Logo.txt", "r")
         for self._line in self._logo:
-            self._write(self._line)
+            self._emit(self._line)
 
         self._emit("\n" + "Welcome to uqlxViz v1.0")
 
@@ -34,14 +34,6 @@ class Log(tk.Frame,):
         self._logbox.configure(state='disabled')
         # autoscroll to the bottom
         self._logbox.yview(tk.END)
-    
-    def _write(self, msg ):
-        self._logbox.configure(state='normal')
-        self._logbox.insert(tk.END, msg )
-        self._logbox.configure(state='disabled')
-        # autoscroll to the bottom
-        self._logbox.yview(tk.END)
-
 
 
 
