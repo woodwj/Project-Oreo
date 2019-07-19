@@ -12,12 +12,6 @@ import ui
 # For our Main Application in particular, this gives a private namespace for all callbacks and private functions
 
 
-#~ Note ~#
-# accepted currencies in utils must be expanded to use non-demo files
-############
-
-
-
 #MainApplication Class
 class MainApplication(tk.Frame):
 
@@ -34,7 +28,7 @@ class MainApplication(tk.Frame):
         self._horizpane.pack(fill = 'both', expand = 1)
         
         # create the Explorer frame with and add to the horizontal pane 
-        self._explorer = explorer.Explorer(self._horizpane, self._setup_display)
+        self._explorer = explorer.Explorer(self._horizpane, self.setup_display)
         self._horizpane.add(self._explorer.get_frame())
         
         # now using the horizontal plane create the verticle pane
@@ -57,34 +51,27 @@ class MainApplication(tk.Frame):
         self._parent.title("uqlxViz")
 
     # a write log procedure that just makes it acessable as a method of main not of the object
-    def _wlog(self,msg, colour = "black"):
-        self._log._emit(msg, colour)
+    def _wlog(self,msg):
+        self._log._emit(msg)
 
     # function for opening a file which will open the tree view in explorer frame
     def _fileOpened(self, filename):
-        self._wlog(f"Opened File {filename}", "green")
+        self._wlog(f"Opened File {filename}")
 
-        self._wlog("File processing ...", "yellow")
+        self._wlog("File processing ...")
         # calls exploere object funciton which will delegate
-        msg = self._explorer.file_load(filename)
+        self._explorer.file_load(filename)
         # when call stack return back to our main file. write to log file has been loaded
+        self._wlog("File loaded to Explorer.")
 
-        # if error message is returned then send to log
-        if msg:
-            self._wlog(msg, "red")
-        # otherwise write a success message to log
-        else:
-            self._wlog("File loaded to Explorer.", "green")
 
-    # callbackfunction from the explorer that is passed on instantiation. returns here to 
-    def _setup_display(self, currency_curve, curve_name):
-        self._wlog("Displaying curve componant...", "yellow")
+    def setup_display(self, currency_curve, curve_name):
+        self._wlog("Displaying curve componant...")
         return_msg = self._display.prepare( currency_curve, curve_name )
-        #if there is a return message written to log
         if return_msg:
-            self._wlog( return_msg , "red" )
+            self._wlog( return_msg )
         else:
-            self._wlog("Componant displayed succesfully.","green")
+            self._wlog("Componant displayed succesfully.")
 
 
 # Main

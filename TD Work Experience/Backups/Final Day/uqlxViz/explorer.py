@@ -17,39 +17,17 @@ class Explorer(tk.Frame):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.display_callback = display_callback
         self._parent = parent
-
-        self._frame = tk.Frame(self._parent, borderwidth=5, bg = "#323f54")
+        self._frame = tk.Frame(self._parent, width = 200, height = 600, borderwidth=5, bg = "white")
         self._frame.pack(expand = 0, anchor = 'nw', side='left' ,fill = 'y', padx = 5, pady = 5)
-        
-        self._frame_title = tk.Label(self._frame, text = "Explorer", bg = "#4287f5", fg = 'white')
+        self._frame_title = tk.Label(self._frame, text = "Explorer", bg = "white")
         self._frame_title.pack(anchor = "nw")
-        
-        self.tree = ttk.Treeview(self._frame, style= "Custom.Treeview" )
+        self.tree = ttk.Treeview(self._frame)
         self.tree["columns"] = ("#1")
         self.tree.heading ('#0', text = 'Componant')
         self.tree.heading ('#1', text = "Value")
         self.tree.pack(expand = 1, fill = 'both')
         self.tree.bind('<Double-1>', self.selectItem)
-        
         self.currency_curves = {}
-        self.curveIDs = []
-        
-        # styling oddly this is global maybe. not sure how this part of tk works
-        style = ttk.Style()
-        style.element_create("Custom.Treeheading.border", "from", "default")
-        style.layout("Custom.Treeview.Heading", [
-        ("Custom.Treeheading.cell", {'sticky': 'nswe'}),
-        ("Custom.Treeheading.border", {'sticky':'nswe', 'children': [
-        ("Custom.Treeheading.padding", {'sticky':'nswe', 'children': [
-        ("Custom.Treeheading.image", {'side':'top', 'sticky':'nswe'}),
-        ("Custom.Treeheading.text", {'sticky':'nswe'})
-                ]})
-            ]}),
-        ])
-        style.configure("Custom.Treeview.Heading",
-        background="#4287f5", foreground="white", relief="flat")
-        style.map("Custom.Treeview.Heading",
-        relief=[('active','groove'),('pressed','sunken')]) 
        
 
     
@@ -62,14 +40,15 @@ class Explorer(tk.Frame):
         self.currency_curves = {}
         full_dict =  json_manager.read_file(filename)
         self.CurveID = utils.extract_file_name(filename)
-        if self.CurveID in self.curveIDs:
-            return f"Error duplicate curve: {self.CurveID}"
-        else:
-            self.curveIDs.append(self.CurveID)
-            self.tree_load( self.tree, '', full_dict , 0)
+        self.tree_load( self.tree, '', full_dict , 0)
         
 
     # tree key checkser and inserter
+    def tree_insert(self, Tree, Parent, key, value = ""):
+        text_key = key
+        key = utils.check_exist(Tree, key)
+        Tree.insert( Parent , 'end', key, text = text_key , values = value)
+        return key
 
              
     # to load file then set up treeview 
@@ -77,7 +56,9 @@ class Explorer(tk.Frame):
         
         # When adding a new curve
         if recur_index == 0:
-                Parent = Tree.insert(Parent, 'end', text = self.CurveID)
+                
+                Tree.insert(Parent, 'end', self.CurveID, text = self.CurveID)
+                Parent = self.CurveID
 
         # if pased a dictionary
         if isinstance(Dictionery , dict):
@@ -91,21 +72,20 @@ class Explorer(tk.Frame):
                     
                     # hard coding to cut off at the curve data convenction at currencies
                     if key == "item|UQL/DataCollection":
-                        name = self.tree.item(Parent)['text']
-                        if utils.is_currency(name):
-                            if name not in self.currency_curves:
-                                self.currency_curves[name] = {}
+                        if utils.is_currency(Parent):
+                            if Parent not in self.currency_curves:
+                                self.currency_curves[Parent] = {}
                         else:
-                            self.currency_curves[name][key] = value["dataConvention"]
+                            self.currency_curves[Parent][key] = value["dataConvention"]
 
                         key = value["dataConvention"]
-                        self.currency_curves[name][key] = value['dataList|sequence/object']
-                        Parent = self.tree.insert(Parent, 'end' , text = key)
+                        self.currency_curves[Parent][key] = value['dataList|sequence/object']
+                        key = self.tree_insert(Tree, Parent , key)
                     
                     # Other wise if not at that key then insert and go to the next level
                     else:
 
-                        key =  self.tree.insert(Parent,'end' , text = key)
+                        key = self.tree_insert(Tree, Parent , key)
                         recur_index +=1
                         self.tree_load( Tree, key, value, recur_index)
                 
@@ -113,22 +93,22 @@ class Explorer(tk.Frame):
                 elif isinstance( value , list):
 
                     text_key = key
-                    
+                    key = utils.check_exist(Tree, key)
                     
                     #if at currency pair level insert the key and the value of the fx
                     if recur_index == 2 and len(key)== 6:
                         
                         dataValue =  value[0][0]['item|UQL/DataPointCurveInstrument']["dataValue"]
-                        Parent = Tree.insert(Parent, 'end', text = text_key, values = (dataValue))
+                        Tree.insert(Parent, 'end', key, text = text_key, values = (dataValue))
                     
                     # if not at that level just insert and recour
                     else:
-                        key = Tree.insert(Parent, 'end', text = text_key)
+                        Tree.insert(Parent, 'end', key, text = text_key)
                         self.tree_load( Tree, key, value , recur_index)
                 
                 # when dict values are data then insert with the value
                 else:
-                    key = self.tree.insert( Parent, 'end' ,text = key ,values = value)
+                    key = self.tree_insert(Tree, Parent, key, value = value)
         
         # otherwise if the value passed as dict is a list loop through but dont insert
         else:
@@ -136,14 +116,11 @@ class Explorer(tk.Frame):
                 self.tree_load( Tree, Parent, item ,recur_index )
 
     def selectItem(self, event ):
-        # checks that parents parent is curencies and if so loads display
         item_iid = self.tree.selection()[0]
         parent_iid = self.tree.parent(item_iid)
-        name_parent = self.tree.item(parent_iid)['text']
-        name_item = self.tree.item(item_iid)['text']
-        if utils.is_currency(name_parent):
-            Curve_componants = (self.currency_curves[name_parent][name_item])
-            self.display_callback(Curve_componants, name_item)
+        if utils.is_currency(parent_iid):
+            Curve_componants = (self.currency_curves[parent_iid][item_iid])
+            self.display_callback(Curve_componants, item_iid)
 
         
         
