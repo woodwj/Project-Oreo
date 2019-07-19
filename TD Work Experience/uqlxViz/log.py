@@ -22,7 +22,7 @@ class Log(tk.Frame,):
         # log text box
         self._logbox = ScrolledText.ScrolledText(self._frame, state='disabled' )
         self._logbox.configure(font='TkFixedFont',bg = "#8e96a3")
-        self._logbox.pack(expand = 1 , anchor = "nw", fill = "x" )
+        self._logbox.pack(expand = 0 , anchor = "nw", fill = "both" )
 
         # container frame for input line
         self._input_frame =tk.Frame(self._frame, borderwidth = 5, height = 200, bg = "#323f54")
@@ -40,6 +40,7 @@ class Log(tk.Frame,):
 
         # start up logo load and write to log
         self._logo("media/Logo.txt")
+        self._emit("\n" + "Welcome to uqlxViz v1.0\n", "white")
 
     #logo function that runs at start + in multicolour with command line
     def _logo(self , filename, colour = "white"):
@@ -49,11 +50,11 @@ class Log(tk.Frame,):
                 colour = utils.random_colour()
             self._logbox.configure(state='normal')
             self._logbox.insert(tk.END, self._line[:-1] + "\n", colour )
-            self._logbox.tag_configure(colour, foreground = colour, font = ("Courier",8, "bold"))
+            self._logbox.tag_configure(colour, foreground = colour, font = ("Courier",10, "bold"))
             self._logbox.configure(state='disabled')
             # autoscroll to the bottom
             
-        self._emit("\n" + "Welcome to uqlxViz v1.0", "white")
+        
 
     # function to write to the logbox    
     def _emit(self, msg, colour = "black" ):

@@ -78,13 +78,13 @@ class MainApplication(tk.Frame):
 
     # callbackfunction from the explorer that is passed on instantiation. returns here to 
     def _setup_display(self, currency_curve, curve_name):
-        self._wlog("Displaying curve componant...", "yellow")
+        self._wlog("Displaying curve component...", "yellow")
         return_msg = self._display.prepare( currency_curve, curve_name )
         #if there is a return message written to log
         if return_msg:
             self._wlog( return_msg , "red" )
         else:
-            self._wlog("Componant displayed succesfully.","green")
+            self._wlog("Component displayed succesfully.","green")
 
 
 # Main

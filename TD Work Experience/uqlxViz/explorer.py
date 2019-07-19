@@ -26,7 +26,7 @@ class Explorer(tk.Frame):
         
         self.tree = ttk.Treeview(self._frame, style= "Custom.Treeview" )
         self.tree["columns"] = ("#1")
-        self.tree.heading ('#0', text = 'Componant')
+        self.tree.heading ('#0', text = 'Component')
         self.tree.heading ('#1', text = "Value")
         self.tree.pack(expand = 1, fill = 'both')
         self.tree.bind('<Double-1>', self.selectItem)
@@ -119,7 +119,7 @@ class Explorer(tk.Frame):
                     if recur_index == 2 and len(key)== 6:
                         
                         dataValue =  value[0][0]['item|UQL/DataPointCurveInstrument']["dataValue"]
-                        Parent = Tree.insert(Parent, 'end', text = text_key, values = (dataValue))
+                        Tree.insert(Parent, 'end', text = text_key, values = (dataValue))
                     
                     # if not at that level just insert and recour
                     else:
